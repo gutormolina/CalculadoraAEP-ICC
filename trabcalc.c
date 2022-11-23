@@ -12,7 +12,7 @@ int main(){
 			if(op < 1 || op > 6)
 				printf("O numero inserido precisa ser de 1 a 6.\n");
 		}while(op < 1 || op > 6);
-		if(op >= 1 && op <= 4){
+		if(op <= 4){
 			printf("\nDigite um valor N: ");
 			scanf("%f", &N);
 			printf("Digite um valor M: ");
@@ -40,7 +40,8 @@ int main(){
 					R = R + i;
 				break;
 		}			
-		printf("\nResultado: %.3f\n\n", R);
+		if(op <= 5 )
+			printf("\nResultado: %.3f\n\n", R);
 		
 		R = 0;
 		
