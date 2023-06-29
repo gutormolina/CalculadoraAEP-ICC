@@ -1,0 +1,163 @@
+﻿;---------------------------------------------------
+; Programa: Calculadora Projeto Final
+; Autor: Augusto Molina e Luca Rodrigues
+; Data: 29/11/22
+;---------------------------------------------------
+; Posição 255: 0
+; Posição 254: 1
+; Posição 253: FF (-1 em C2)
+; Posição 252: Armazenar Seleção do Usuário
+; Posição 251: Armazenar Seletor Atual (Legado)
+; Posição 250: Armazenar Valor 1
+; Posição 249: Armazenar Valor 2
+
+
+; Configuração
+LDI 1
+STA 254
+LDI 255
+STA 253
+
+
+;Início
+
+
+; Menu de Seleção (Loop de Input)
+selecao: IN 1
+ADD 255
+JZ selecao
+IN 0
+STA 252
+
+
+; Cleanup
+LDA 255
+OUT 0
+STA 251
+STA 248
+
+
+; Calcula qual operação deve ser feita (Carrega a Seleção do Usuário e adiciona -1, checando se deu zero para ir para a operação.
+LDA 252
+ADD 253
+JZ soma
+ADD 253
+JZ subtracao
+ADD 253
+JZ multiplicacao
+ADD 253
+JZ divisao
+ADD 253
+JZ somapa
+ADD 253
+JZ fim
+JMP selecao
+
+
+soma: NOP
+valorSoma1: IN 1
+ADD 255
+JZ valorSoma1
+IN 0
+STA 250
+valorSoma2: IN 1
+ADD 255
+JZ valorSoma2
+IN 0
+ADD 250
+OUT 0
+JMP selecao
+
+
+subtracao: NOP
+valorSub1: IN 1
+ADD 255
+JZ valorSub1
+IN 0
+STA 250
+valorSub2: IN 1
+ADD 255
+JZ valorSub2
+IN 0
+NOT
+ADD 254
+ADD 250
+OUT 0
+JMP selecao
+
+
+; Usa contador para reduzir em um a cada loop e checar se chegou em zero para finalizar as somas sucessivas
+multiplicacao: NOT
+valorMul1: IN 1
+ADD 255
+JZ valorMul1
+IN 0
+STA 250
+valorMul2: IN 1
+ADD 255
+JZ valorMul2
+IN 0
+STA 249
+STA 248
+repeteMul: LDA 253
+ADD 250
+STA 250
+JZ resultMul
+LDA 248
+ADD 249
+STA 248
+JMP repeteMul
+resultMul: LDA 248
+OUT 0
+JMP selecao
+
+
+; Usa contador para somar um a cada loop e então fazer a subtração sucessiva no input do usuário, checando por zero ou negativo para finalizar
+divisao: NOT
+valorDiv1: IN 1
+ADD 255
+JZ valorDiv1
+IN 0
+STA 250
+valorDiv2: IN 1
+ADD 255
+JZ valorDiv2
+IN 0
+STA 249
+repeteDiv: LDA 248
+ADD 254
+STA 248
+LDA 249
+NOT
+ADD 254
+ADD 250
+STA 250
+JZ finalizaDiv
+JN finalizaDiv
+JMP repeteDiv
+finalizaDiv: LDA 248
+OUT 0
+JMP selecao
+
+
+; Usa contador para checar se chegou em zero e finalizar a soma sucessiva
+somapa: NOP
+valorSomaPa: IN 1
+ADD 255
+JZ valorSomaPa
+IN 0
+STA 250
+STA 248
+repeteSomaPa: LDA 248
+ADD 253
+JZ finalizaSomaPa
+STA 248
+ADD 250
+STA 250
+JMP repeteSomaPa
+finalizaSomaPa: LDA 250
+OUT 0
+JMP selecao
+
+
+fim: HLT
